@@ -1,0 +1,6 @@
+death range of celsius - under 31 and above 43
+
+death range of Fahrenheit - under 88 and above 110
+
+formula to change F to C:
+    C = 5/9*(F-32)
