@@ -117,6 +117,23 @@ def stdv(num_file: int) -> float:
     fin = open("department_" + str(num_file) + ".txt", "r")
     sum = 0
     num_of_patients = 0
+    count = 0
+    for time in range(60 * 24):
+        s = fin.readline().split()
+        for patient in range(len(s)):
+            degree = float(s[patient])
+            if isFahrenheit(degree):
+                sum += fahrenheitToCelsius(degree)
+                num_of_patients += 1
+            elif isCelsius(degree):
+                sum += degree
+                num_of_patients += 1
+    fin.close()
+
+    mean = sum / num_of_patients
+
+    fin = open("department_" + str(num_file) + ".txt", "r")
+    variance = 0
     for time in range(60 * 24):
         s = fin.readline().split()
         for patient in range(len(s)):
@@ -124,21 +141,7 @@ def stdv(num_file: int) -> float:
             if isFahrenheit(degree):
                 degree = fahrenheitToCelsius(degree)
             if isCelsius(degree):
-                sum += degree
-                num_of_patients += 1
-    fin.close()
-
-    fin = open("department_" + str(num_file) + ".txt", "r")
-
-    mean = sum / num_of_patients
-
-    variance = 0
-
-    for time in range(60 * 24):
-        s = fin.readline().split()
-        for patient in range(len(s)):
-            degree = float(s[patient])
-            variance += (degree - mean) ** 2
+                variance += (degree - mean) ** 2
 
     variance = variance / num_of_patients
 
@@ -149,7 +152,7 @@ def stdv(num_file: int) -> float:
     return dev
 
 
-# convert2arff(3)
+#convert2arff(1)
 # convert2arffNotCleaned(3)
 
 print(stdv(1))
