@@ -1,7 +1,7 @@
 from cmath import sqrt
 
 
-def convert2arffNotCleaned(num_of_files: int) -> None:
+def convert_2_arff_Not_Cleaned(num_of_files: int) -> None:
     """
     Convert cubeBase file to .arff
     without checking the reliability of the data
@@ -27,7 +27,7 @@ def convert2arffNotCleaned(num_of_files: int) -> None:
     fout.close()
 
 
-def fahrenheitToCelsius(fahrenheit: float) -> float:
+def fahrenheit_to_celsius(fahrenheit: float) -> float:
     """
     Convert celsius to fahrenheit
     :param fahrenheit: degree
@@ -38,7 +38,7 @@ def fahrenheitToCelsius(fahrenheit: float) -> float:
     return 5 / 9 * (fahrenheit - 32)
 
 
-def isCelsius(celsius: float) -> float:
+def is_celsius(celsius: float) -> float:
     """
     Check whether the degree scale is Celsius
     :param celsius: degree
@@ -46,10 +46,10 @@ def isCelsius(celsius: float) -> float:
     :return: whether "celsius" is in reasonable range of Celsius
     :rtype: bool
     """
-    return 31 < celsius < 43
+    return 36 <= celsius <= 43
 
 
-def isFahrenheit(fahrenheit: float) -> float:
+def is_fahrenheit(fahrenheit: float) -> float:
     """
     Check whether the degree scale is Fahrenheit
     :param fahrenheit: degree
@@ -57,10 +57,10 @@ def isFahrenheit(fahrenheit: float) -> float:
     :return: whether "fahrenheit" is in reasonable range of Fahrenheit
     :rtype: bool
     """
-    return 88 < fahrenheit < 110
+    return 96 <= fahrenheit <= 110
 
 
-def highOrLow(degree: float) -> str:
+def high_or_low(degree: float) -> str:
     """
     Catalogs the degrees to "High" or "Low"
     :param degree:
@@ -95,10 +95,10 @@ def convert2arff(num_of_files: int) -> None:
             s = fin.readline().split()
             for patient in range(len(s)):
                 degree = float(s[patient])
-                if isCelsius(degree):
-                    degree = highOrLow(degree)
-                elif isFahrenheit(degree):
-                    degree = highOrLow(fahrenheitToCelsius(degree))
+                if is_celsius(degree):
+                    degree = high_or_low(degree)
+                elif is_fahrenheit(degree):
+                    degree = high_or_low(fahrenheit_to_celsius(degree))
                 else:
                     degree = "?"
                 fout.write(str(patient + 1) + "," + str(time) + "," + degree + "\n")
@@ -115,44 +115,32 @@ def stdv(num_file: int) -> float:
     :rtype: float
     """
     fin = open("department_" + str(num_file) + ".txt", "r")
-    sum = 0
+    my_sum = 0
+    multi = 0
     num_of_patients = 0
     count = 0
     for time in range(60 * 24):
         s = fin.readline().split()
         for patient in range(len(s)):
             degree = float(s[patient])
-            if isFahrenheit(degree):
-                sum += fahrenheitToCelsius(degree)
+            if is_fahrenheit(degree):
+                degree = fahrenheit_to_celsius(degree)
+                my_sum += degree
+                multi += degree**2
                 num_of_patients += 1
-            elif isCelsius(degree):
-                sum += degree
+            elif is_celsius(degree):
+                my_sum += degree
+                multi += degree**2
                 num_of_patients += 1
     fin.close()
 
-    mean = sum / num_of_patients
+    avg = my_sum / num_of_patients
+    sqr_sum = multi / num_of_patients
 
-    fin = open("department_" + str(num_file) + ".txt", "r")
-    variance = 0
-    for time in range(60 * 24):
-        s = fin.readline().split()
-        for patient in range(len(s)):
-            degree = float(s[patient])
-            if isFahrenheit(degree):
-                degree = fahrenheitToCelsius(degree)
-            if isCelsius(degree):
-                variance += (degree - mean) ** 2
-
-    variance = variance / num_of_patients
-
-    dev = sqrt(variance)
-
-    fin.close()
-
-    return dev
+    return sqrt(sqr_sum - avg**2)
 
 
-#convert2arff(1)
+# convert2arff(1)
 # convert2arffNotCleaned(3)
 
 print(stdv(1))
