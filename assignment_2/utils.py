@@ -143,6 +143,6 @@ def stdv(num_file: int) -> float:
 # convert2arff(1)
 # convert2arffNotCleaned(3)
 
-print(stdv(1))
-print(stdv(2))
-print(stdv(3))
+print(stdv(1))#(2.057360501700639+0j)
+print(stdv(2))#(2.043891835073238+0j)
+print(stdv(3))#(2.052746692460018+0j)
