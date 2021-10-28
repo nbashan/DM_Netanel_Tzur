@@ -1,3 +1,6 @@
+#Name Netanel Bashan 323056077
+#Name Tzur-Eitan Levy 205431935
+
 from cmath import sqrt
 
 
