@@ -2,7 +2,7 @@ import random
 
 N = 5  # no. of attributes
 M = 100 # no. of rows in file
-MINSUP = 0.3
+MINSUP = 0.2
 
 
 # Creates a file named filename containing m sorted itemsets of items 0..N-1
@@ -67,9 +67,17 @@ def create_kplus1_itemsets(kitemsets, filename):
         # compares all pairs, without the last item, (note that the lists are sorted)
         # and if they are equal than adds the last item of kitemsets[j] to kitemsets[i]
         # in order to create k+1 itemset
+
         while j < len(kitemsets) and kitemsets[i][:-1] == kitemsets[j][:-1]:
-            kplus1_itemsets += [kitemsets[i] + [kitemsets[j][-1]]]
-            # TODO:: add check to all sub item set in size k
+            sub_item_set = kitemsets[i] + [kitemsets[j][-1]]
+            passed = True
+            for k in range(len(sub_item_set)):
+                temp = sub_item_set[0:k] + sub_item_set[k+1:]
+                if temp not in kitemsets:
+                    passed = False
+                    break
+            if passed:
+                kplus1_itemsets.append(sub_item_set)
             j += 1
     # checks which of the k+1 itemsets are frequent
     return frequent_itemsets(filename, kplus1_itemsets)
