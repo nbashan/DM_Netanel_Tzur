@@ -42,6 +42,7 @@ def frequent_itemsets(filename, itemsets):
     filelength = 0  # filelength is the no. of itemsets in the file. we
     # use it to calculate the support of an itemset
     count = [0] * len(itemsets)  # creates a list of counters
+    count_absolute = [0] * len(itemsets)  # creates a list of counters
     line = f.readline()
     while line != "":
         filelength += 1
@@ -91,10 +92,29 @@ def create_1itemsets(filename):
 
 
 def minsup_itemsets(filename):
+    f = open(filename, "r")
+
     minsupsets = kitemsets = create_1itemsets(filename) #
     while kitemsets != []:
         kitemsets = create_kplus1_itemsets(kitemsets, filename)
         minsupsets += kitemsets
+
+    count_absolute = [0] * len(minsupsets)  # creates a list of counters
+
+    filelength = 0
+    line = f.readline()
+    while line != "":
+        filelength += 1
+        for i in range(len(minsupsets)):
+            if minsupsets[i] == [int(i) for i in line.split()]:
+                count_absolute[i] += 1
+        line = f.readline()
+    f.close()
+    for i in range(len(minsupsets)):
+        minsupsets[i].append(count_absolute[i] / filelength)
+
+
+
     return minsupsets
 
 
