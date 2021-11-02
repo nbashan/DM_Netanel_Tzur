@@ -1,4 +1,7 @@
 import random
+import time
+start_time = time.time()
+
 
 N = 5  # no. of attributes
 M = 100 # no. of rows in file
@@ -100,3 +103,4 @@ def minsup_itemsets(filename):
 
 createfile(M, "itemsets.txt")
 print(minsup_itemsets("itemsets.txt"))
+print("--- %s seconds ---" % (time.time() - start_time))
