@@ -1,5 +1,5 @@
 import math
-DEPTH = 4
+DEPTH = 30
 
 
 def split(examples, used, trait):
@@ -154,12 +154,24 @@ def classify(trees,image):
             ret.append(i)
     return ret
 
+def tester(trees,tests):
+    correct = 0
+    wrong = 0
+    for test in tests:
+        if classify(buildClassifier("binary_train.arff",1), test) == [test[-1]]:
+            correct += 1
+        else:
+            wrong += 1
+    return correct / (correct + wrong)
+
+
+
 
 # t = build(e)
 # print(classifier(t, [0, 1, 1, 1]))
-convertArffToBinary("dig-test.arff","binary_test.arff")
+#convertArffToBinary("dig-test.arff","binary_test.arff")
+#print(classify(buildClassifier("binary_train.arff",1), image))
 
-with open("binary_test.arff",'r') as test_file:
-    image = [int(num) for num in test_file.readline().strip().split(',')]
-
-print(classify(buildClassifier("binary_train.arff",1), image))
+tests = fileToMatrix("binary_test.arff")
+trees = buildClassifier("binary_train.arff",1)
+print(tester(trees,tests))
