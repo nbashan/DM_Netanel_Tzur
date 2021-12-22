@@ -126,14 +126,20 @@ def convertArffToBinary(file_name,pixel = 130):
         lines = a_file.readlines()
 
     with open("binary_train.arff", "w") as new_file:
-        lines = lines[lines.index("@data") + 1:].split()
-        for line in lines:
+        lines = lines[lines.index("@data\n") + 1:]
+        for j,line in enumerate(lines):
+            if j == 12643:
+                a = 5
+                pass
+            line = line.split(',')
             for i,number in enumerate(line):
-                line[i] = 0 if number < pixel else 1
+                if number != '':
+                    line[i] = '0' if int(number) < pixel else '1'
+            line = ",".join(line)
             new_file.write(line)
 
 
 # t = build(e)
 # print(classifier(t, [0, 1, 1, 1]))
 
-convertArffToBinary()
+convertArffToBinary("digits-testing.arff")
