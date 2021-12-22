@@ -130,6 +130,7 @@ def convertArffToBinary(file_name,pixel = 130):
         for line in lines:
             for i,number in enumerate(line):
                 line[i] = 0 if number < pixel else 1
+
             new_file.write(line)
 
 

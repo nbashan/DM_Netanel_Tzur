@@ -86,28 +86,7 @@ def convert2arff(num_of_files: int) -> None:
     :return: None
     :rtype: None
     """
-    fout = open("hospital.arff", "w")
-    fout.write("@relation patients_temperatures\n")
-    fout.write("@attribute patients_ID numeric\n")
-    fout.write("@attribute time numeric\n")
-    fout.write("@attribute temperature {Low, High}\n\n")
-    fout.write("@data\n")
-    for ward in range(1, num_of_files + 1):
-        fin = open("department_" + str(ward) + ".txt", "r")
-        for time in range(60 * 12):
-            s = fin.readline().split()
-            for patient in range(len(s)):
-                degree = float(s[patient])
-                if is_celsius(degree):
-                    degree = high_or_low(degree)
-                elif is_fahrenheit(degree):
-                    degree = high_or_low(fahrenheit_to_celsius(degree))
-                else:
-                    degree = "?"
-                fout.write(str(patient + 1) + "," + str(time) + "," + degree + "\n")
-        fin.close()
-    fout.close()
-
+    c
 
 def stdv(num_file: int) -> float:
     """

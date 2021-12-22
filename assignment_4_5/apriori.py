@@ -146,4 +146,3 @@ def minsup_itemsets(filename):
 # createfile(M, "itemsets.txt")
 print(minsup_itemsets("itemsets.txt"))
 print("--- %s seconds ---" % (time.time() - start_time))
-

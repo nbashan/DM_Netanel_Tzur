@@ -22,4 +22,5 @@ def idx2arff(images, labels, weka):
     flabels.close()
 
 
-idx2arff("train-images-idx3-ubyte.gz", "train-labels-idx1-ubyte.gz", "digits-testing.arff")
+idx2arff("train-images-idx3-ubyte.gz", "train-labels-idx1-ubyte.gz", "digits-training.arff")
+idx2arff("t10k-images-idx3-ubyte.gz", "t10k-labels-idx1-ubyte.gz", "digits-testing.arff")
