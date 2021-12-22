@@ -1,4 +1,5 @@
 import math
+DEPTH = 1
 
 
 def split(examples, used, trait):
@@ -75,12 +76,12 @@ def minInfoTrait(examples, used):
     return minTrait
 
 
-def build(examples):  # builds used
+def build(examples, depth=DEPTH):  # builds used
     used = [1] * (len(examples[0]) - 1)  # used[i]=1 means that attribute i hadn't been used
-    return recBuild(examples, used, 0)
+    return recBuild(examples, used, 0, depth)
 
 
-def recBuild(examples, used, parentMaj):
+def recBuild(examples, used, parentMaj, depth):
     """
     Builds the decision tree.
     parentMaj = majority class of the parent of this node. the heuristic is that if there is no decision returns parentMaj
@@ -88,14 +89,14 @@ def recBuild(examples, used, parentMaj):
     cl = isSameClass(examples)
     if cl == 0 or cl == 1:  # all zeros or all ones
         return [[], cl, []]
-    if cl == 7:  # examples is empty
+    if cl == 7 or depth == 0:  # examples is empty
         return [[], parentMaj, []]
     trait = minInfoTrait(examples, used)
     if trait == -1:  # there are no more attr. for splitting
         return [[], cl + 2, []]  # cl+2 - makes cl 0/1 (-2+2 / -1+2)
     x = split(examples, used, trait)
-    left = recBuild(x[0], used[:], cl + 2)
-    right = recBuild(x[1], used[:], cl + 2)
+    left = recBuild(x[0], used[:], cl + 2, depth-1)
+    right = recBuild(x[1], used[:], cl + 2, depth-1)
     return [left, trait, right]
 
 
@@ -119,5 +120,39 @@ e = [[1, 0, 0, 0, 0],
      [1, 0, 1, 1, 0],
      [1, 0, 0, 1, 1]]
 
-t = build(e)
-print(classifier(t, [0, 1, 1, 1]))
+
+def getData(file_name) -> str:
+    """
+    Find the Standard deviation of the temperature of the inpatients of a certain ward
+    :param num_file: the number of the ward
+    :type num_file: int
+    :return: Standard deviation of the patient
+    :rtype: float
+    """
+    ls = []
+    for line in (open(file_name)):
+        s = line.split(',')[:-1]
+        for i, num in enumerate(s):
+            if int(num) < 130:
+                s[i] = 0
+            else:
+                s[i] = 1
+        ls.append(s)
+    return ls
+
+
+def convertArffToBinary(file_name):
+    with open(file_name, 'r') as arff_file, open('binary_train', 'w') as binary_file:
+        lines = arff_file.readlines()
+        for line in lines:
+            pass
+
+
+
+ls= []
+s = [1,2,3]
+ls.append(s)
+# t = build(e)
+# print(classifier(t, [0, 1, 1, 1]))
+data = getData('digits-testing.arff')
+print(data)
