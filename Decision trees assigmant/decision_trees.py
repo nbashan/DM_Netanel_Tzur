@@ -121,38 +121,19 @@ e = [[1, 0, 0, 0, 0],
      [1, 0, 0, 1, 1]]
 
 
-def getData(file_name) -> str:
-    """
-    Find the Standard deviation of the temperature of the inpatients of a certain ward
-    :param num_file: the number of the ward
-    :type num_file: int
-    :return: Standard deviation of the patient
-    :rtype: float
-    """
-    ls = []
-    for line in (open(file_name)):
-        s = line.split(',')[:-1]
-        for i, num in enumerate(s):
-            if int(num) < 130:
-                s[i] = 0
-            else:
-                s[i] = 1
-        ls.append(s)
-    return ls
+def convertArffToBinary(file_name,pixel = 130):
+    with open(file_name, "r") as a_file:
+        lines = a_file.readlines()
 
-
-def convertArffToBinary(file_name):
-    with open(file_name, 'r') as arff_file, open('binary_train', 'w') as binary_file:
-        lines = arff_file.readlines()
+    with open("binary_train.arff", "w") as new_file:
+        lines = lines[lines.index("@data") + 1:].split()
         for line in lines:
-            pass
+            for i,number in enumerate(line):
+                line[i] = 0 if number < pixel else 1
+            new_file.write(line)
 
 
-
-ls= []
-s = [1,2,3]
-ls.append(s)
 # t = build(e)
 # print(classifier(t, [0, 1, 1, 1]))
-data = getData('digits-testing.arff')
-print(data)
+
+convertArffToBinary()
