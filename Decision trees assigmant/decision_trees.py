@@ -1,5 +1,5 @@
 import math
-DEPTH = 30
+DEPTH = 4
 
 
 def split(examples, used, trait):
@@ -144,7 +144,7 @@ def buildClassifier(file_name,depth):
     mat = fileToMatrix(file_name)
     trees = []
     for i in range(10):
-        trees.append(build(mat,i,DEPTH))
+        trees.append(build(mat,i,depth))
     return trees
 
 def classify(trees,image):
@@ -163,6 +163,19 @@ def tester(trees,tests):
         else:
             wrong += 1
     return correct / (correct + wrong)
+def threshold():
+    best = 0
+    index = 0
+    for i in range(256):
+        convertArffToBinary("dig-test.arff","binary_test.arff",i)
+        tests = fileToMatrix("binary_test.arff")
+        trees = buildClassifier("binary_train.arff", DEPTH)
+        percentage = tester(trees, tests)
+        if percentage > best:
+            best = percentage
+            index = i
+    return index
+# print(classify(buildClassifier("binary_train.arff",1), image))
 
 
 
@@ -172,6 +185,8 @@ def tester(trees,tests):
 #convertArffToBinary("dig-test.arff","binary_test.arff")
 #print(classify(buildClassifier("binary_train.arff",1), image))
 
-tests = fileToMatrix("binary_test.arff")
-trees = buildClassifier("binary_train.arff",1)
-print(tester(trees,tests))
+#tests = fileToMatrix("binary_test.arff")
+#trees = buildClassifier("binary_train.arff",1)
+#print(tester(trees,tests))
+
+print(threshold())
