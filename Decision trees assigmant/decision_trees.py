@@ -123,11 +123,11 @@ e = [[1, 0, 0, 0, 0],
      [1, 0, 0, 1, 1]]
 
 
-def convertArffToBinary(file_name,pixel = 130):
+def convertArffToBinary(file_name,out_file,pixel = 130):
     with open(file_name, "r") as a_file:
         lines = a_file.readlines()
 
-    with open("binary_train.arff", "w") as new_file:
+    with open(out_file, "w") as new_file:
         lines = lines[lines.index("@data\n") + 1:]
         for j,line in enumerate(lines):
             line = line.split(',')
@@ -145,12 +145,21 @@ def buildClassifier(file_name,depth):
     trees = []
     for i in range(10):
         trees.append(build(mat,i,DEPTH))
-    print(trees)
     return trees
 
+def classify(trees,image):
+    ret = []
+    for i, tree in enumerate(trees):
+        if classifier(tree, image) == 1:
+            ret.append(i)
+    return ret
 
 
 # t = build(e)
 # print(classifier(t, [0, 1, 1, 1]))
-#convertArffToBinary("dig-train.arff")
-buildClassifier("binary_train.arff",1)
+convertArffToBinary("dig-test.arff","binary_test.arff")
+
+with open("binary_test.arff",'r') as test_file:
+    image = [int(num) for num in test_file.readline().strip().split(',')]
+
+print(classify(buildClassifier("binary_train.arff",1), image))
