@@ -1,5 +1,5 @@
 import math
-DEPTH = 1
+DEPTH = 4
 
 
 def split(examples, used, trait):
@@ -17,7 +17,7 @@ def split(examples, used, trait):
     return newEx
 
 
-def isSameClass(examples):
+def isSameClass(examples,num):
     """
     returns 0 if all the examples are classified as 0.
     returns 1 if all the examples are classified as 1.
@@ -27,9 +27,10 @@ def isSameClass(examples):
     """
     if examples == []:
         return 7
-    zo = [0, 0]  # zo is a counter of zeros and ones in class
+    zo = [0, 0]  # zo is a counter of notNums and nums in class
     for e in examples:
-        zo[e[-1]] += 1
+        index = 1 if e[-1] == num else 0
+        zo[index] += 1
     if zo[0] == 0:
         return 1
     if zo[1] == 0:
@@ -40,14 +41,15 @@ def isSameClass(examples):
         return -1
 
 
-def infoInTrait(examples, i):
+def infoInTrait(examples, i, num):
     """
     calculates the information in trait i using Shannon's formula
     """
     count = [[0, 0], [0, 0]]  # [no. of ex. with attr.=0 and clas.=0,no. of ex. with attr.=0 and clas.=1],
     # [no. of ex. with attr.=1 and clas.=0,no. of ex. with attr.=1 and clas.=1]
     for e in examples:
-        count[e[i]][e[-1]] += 1
+        index = 1 if e[-1] == num else 0
+        count[e[i]][index] += 1
     x = 0
     # Shannon's formula
     if count[0][0] != 0 and count[0][1] != 0:
@@ -59,7 +61,7 @@ def infoInTrait(examples, i):
     return x
 
 
-def minInfoTrait(examples, used):
+def minInfoTrait(examples, used, num):
     """
     used[i]=0 if trait i was already used. 1 otherwise.
 
@@ -69,34 +71,34 @@ def minInfoTrait(examples, used):
     minTrait = m = -1
     for i in range(len(used)):
         if used[i] == 1:
-            info = infoInTrait(examples, i)
+            info = infoInTrait(examples, i, num)
             if info < m or m == -1:
                 m = info
                 minTrait = i
     return minTrait
 
 
-def build(examples, depth=DEPTH):  # builds used
+def build(examples,num, depth=DEPTH):  # builds used
     used = [1] * (len(examples[0]) - 1)  # used[i]=1 means that attribute i hadn't been used
-    return recBuild(examples, used, 0, depth)
+    return recBuild(examples, used, 0, depth, num)
 
 
-def recBuild(examples, used, parentMaj, depth):
+def recBuild(examples, used, parentMaj, depth, num):
     """
     Builds the decision tree.
     parentMaj = majority class of the parent of this node. the heuristic is that if there is no decision returns parentMaj
     """
-    cl = isSameClass(examples)
+    cl = isSameClass(examples,num)
     if cl == 0 or cl == 1:  # all zeros or all ones
         return [[], cl, []]
     if cl == 7 or depth == 0:  # examples is empty
         return [[], parentMaj, []]
-    trait = minInfoTrait(examples, used)
+    trait = minInfoTrait(examples, used, num)
     if trait == -1:  # there are no more attr. for splitting
         return [[], cl + 2, []]  # cl+2 - makes cl 0/1 (-2+2 / -1+2)
     x = split(examples, used, trait)
-    left = recBuild(x[0], used[:], cl + 2, depth-1)
-    right = recBuild(x[1], used[:], cl + 2, depth-1)
+    left = recBuild(x[0], used[:], cl + 2, depth-1, num)
+    right = recBuild(x[1], used[:], cl + 2, depth-1, num)
     return [left, trait, right]
 
 
@@ -133,8 +135,22 @@ def convertArffToBinary(file_name,pixel = 130):
                 line[i] = '0' if int(number) < pixel else '1'
             line = ",".join(line)
             new_file.write(line)
+def fileToMatrix(file_name):
+    with open(file_name,'r') as file:
+        ret = [[int(num) for num in line.strip().split(',')] for line in file.readlines()]
+    return ret
+
+def buildClassifier(file_name,depth):
+    mat = fileToMatrix(file_name)
+    trees = []
+    for i in range(10):
+        trees.append(build(mat,i,DEPTH))
+    print(trees)
+    return trees
+
 
 
 # t = build(e)
 # print(classifier(t, [0, 1, 1, 1]))
-convertArffToBinary("dig-train.arff")
+#convertArffToBinary("dig-train.arff")
+buildClassifier("binary_train.arff",1)
